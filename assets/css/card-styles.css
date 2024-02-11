@@ -1,0 +1,34 @@
+.product-card {
+    display: flex;
+    /* padding: 15px 30px; */
+    margin: 25px;
+    border-radius: 20px;
+    /* box-sizing: border-box; */
+    /* flex: 1; */
+    /* overflow: scroll; */
+    /* min-height: fit-content; */
+    /* min-height:480px; */
+}
+
+.border-1-red {
+    border: 1px red solid;
+}
+
+.img-container > img {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+.card-left > * {
+    height: 45%;
+}
+
+.section-container {
+    margin-bottom: 50px;
+}
+
+.chart-card-container {
+    margin-bottom: 30px;
+}

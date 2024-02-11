@@ -1,4 +1,5 @@
 <?php
-	header("Location:pages/index.html");
-?>
 
+header("Location:pages/home.php");
+
+?>
