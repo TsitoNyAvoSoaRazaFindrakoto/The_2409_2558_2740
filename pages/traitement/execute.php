@@ -26,7 +26,11 @@ $result = array();
 
 if (function_exists($data[$func_Key])) {
 	// Call the function using variable functions
-	$result = call_user_func($data[$func_Key],$data[$table], $realData);
+	if (isset($data[$table])) {
+		$result = call_user_func($data[$func_Key],$data[$table], $realData);
+	} else{
+		$result = call_user_func($data[$func_Key],$realData);
+	}
 
 } else {
 	$result = "function ".$data[$func_Key]."  does not exist";

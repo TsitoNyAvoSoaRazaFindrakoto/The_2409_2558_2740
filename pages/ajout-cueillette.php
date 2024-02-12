@@ -34,15 +34,14 @@ include_once "../inc/fonction_base.php";
 						<h1 class="text-success" style="font-variant:small-caps;">
 							Ajoutez vos donnees
 						</h1>
-						<div class="alert alert-danger" id=error style="display:none">
-							<span> Poids cueilli superior au poids restant </span>
+						<div class="alert alert-danger" id="error" style="display:none">
+							<span class="text-white" id="message"></span>
 						</div>
 						<form role="form" class="text-start" action="#" id="form" method="post">
-							<input type="hidden" class="form-control" name="table" value="the_Cueillettes">
-							<input type="hidden" class="form-control" name="action" value="insert">
+							<input type="hidden" class="form-control" name="action" value="verify_cueillette">
 							<div class="input-group input-group-static my-3">
-								<label>Date</label>
-								<input type="date" class="form-control" name="date_cueillette" id="date_cueillette">
+								<label>date_cueillette</label>
+								<input type="date_cueillette" class="form-control" name="date_cueillette" id="date_cueillette">
 							</div>
 							<div class="input-group input-group-static mb-3">
 								<label>Cueilleur</label>
@@ -74,7 +73,8 @@ include_once "../inc/fonction_base.php";
 								<input type="number" class="form-control" name="poids_cueilli" id="poids_cueilli">
 							</div>
 							<div class="text-center">
-								<input type="button" id="submit" class="btn bg-gradient-success w-100 my-4 mb-2" value="Ajouter">
+								<input type="button" id="submit" class="btn bg-gradient-success w-100 my-4 mb-2"
+									value="Ajouter">
 							</div>
 						</form>
 					</div>
@@ -87,12 +87,25 @@ include_once "../inc/fonction_base.php";
 				document.getElementById("submit").addEventListener("click", function () {
 					var erreur = document.getElementById("error");
 
+					var poids_cueilli = document.getElementById("poids_cueilli");
+					var date_cueillette = document.getElementById("date_cueillette");
+
+
+					if (date_cueillette.value === '' || date_cueillette.value === null) {
+						message.innerText = " vous n'avez pas insere de date";
+						erreur.style.display = "block";
+					} else if (poids_cueilli.value === null || isNaN(poids_cueilli.value) || poids_cueilli.value <= 0) {
+						message.innerText = " poids_cueilli invalide";
+						erreur.style.display = "block";
+					}
+
 					submitFormExecute("form", "POST")
 						.then((resultat) => {
 							console.log(resultat); // Log the resolved value
-							if (!isNaN(resultat)) {
+							if (resultat === true) {
 								window.location.href = "home.php";
 							} else {
+								message.innerText = resultat;
 								erreur.style.display = "block";
 							}
 						})

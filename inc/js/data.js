@@ -82,7 +82,7 @@ function submit(href, idForm, method) {
 	return new Promise((resolve, reject) => {
 		var formData = new FormData(document.getElementById(idForm));
 		console.log(formData);
-		var xhr = new XMLHttpRequest();
+		var xhr = navigator();
 
 		xhr.onreadystatechange = function () {
 			if (xhr.readyState == 4) {
@@ -95,7 +95,7 @@ function submit(href, idForm, method) {
 			}
 		};
 
-		xhr.open(method, href);
+		xhr.open(method, href,true);
 		xhr.send(formData);
 	});
 };

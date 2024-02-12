@@ -2,12 +2,13 @@
 
 header("Content-Type: application/json");
 include_once "../../inc/fonction_base.php";
+include_once "../../inc/fonction_traitement.php";
 $func_Key = "action";
 $table = "table";
 $data = array();
 $realData = array();
 
-	$data = $_GET;
+	$data = $_REQUEST;
 
 
 foreach ($data as $key => $value) {
@@ -23,11 +24,16 @@ $result = array();
 
 if (function_exists($data[$func_Key])) {
 	// Call the function using variable functions
-	$result = call_user_func($data[$func_Key],$data[$table], $realData);
+	if (isset($data[$table])) {
+		$result = call_user_func($data[$func_Key],$data[$table], $realData);
+	} else {
+		$result =  call_user_func($data[$func_Key],$realData);
+	}
 
 } else {
 	$result = "function ".$data[$func_Key]."  does not exist";
 }
 
+// var_dump ($result);
 // echo $result['result'];
 echo json_encode($result);
