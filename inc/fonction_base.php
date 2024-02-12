@@ -8,8 +8,7 @@
             $stmt = $pdo->query($query);
             $retour = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            echo "Une erreur s'est produite : " . $e->getMessage();
-            error_log("Erreur : " . $e->getMessage(), 0); // Enregistrement côté serveur
+            echo $e->getMessage();
         } finally {
             $pdo = null;
         }
@@ -22,8 +21,7 @@
             $stmt = $pdo->query($query);
             $retour = $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            echo "Une erreur s'est produite : " . $e->getMessage();
-            error_log("Erreur : " . $e->getMessage(), 0); // Enregistrement côté serveur
+            echo $e->getMessage();
         } finally {
             $pdo = null;
         }
@@ -44,8 +42,7 @@
             $stmt = $pdo->prepare("DELETE FROM $nameTable WHERE $condition");
             $stmt->execute();
         } catch (PDOException $e) {
-            echo "Une erreur s'est produite : " . $e->getMessage();
-            error_log("Erreur : " . $e->getMessage(), 0); // Enregistrement côté serveur
+            return $e->getMessage();
         } finally {
             $pdo = null;
         }
@@ -60,8 +57,7 @@
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            echo "Une erreur s'est produite : " . $e->getMessage();
-            error_log("Erreur : " . $e->getMessage(), 0); // Enregistrement côté serveur
+            echo $e->getMessage();
         } finally {
             $pdo = null;
         }
@@ -77,8 +73,7 @@
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            echo "Une erreur s'est produite : " . $e->getMessage();
-            error_log("Erreur : " . $e->getMessage(), 0); // Enregistrement côté serveur
+            echo $e->getMessage();
         } finally {
             $pdo = null;
         }
@@ -97,8 +92,7 @@
         insert('users', $dataToInsert);
 */
     function insert($table_name, $data)
-    {
-        $retoru = 1;
+    {   
         $pdo = connectbd();
         try {
             $columns = implode(", ", array_keys($data));
@@ -109,15 +103,14 @@
             foreach ($data as $key => $value) {
                 $stmt->bindValue(":$key", $value);
             }
-            
+
             $stmt->execute();
         } catch (PDOException $e) {
-            error_log("Erreur : " . $e->getMessage(), 0); // Enregistrement côté serveur
-            return "Une erreur s'est produite : " . $e->getMessage();
+            return $e->getMessage();
         } finally {
             $pdo = null;
         }
-        return $retoru;
+        return 1;
     }
     // update table
     function update($table_name, $data, $condition)
@@ -137,11 +130,11 @@
             }
             $stmt->execute();
         } catch (PDOException $e) {
-            echo "Une erreur s'est produite : " . $e->getMessage();
-            error_log("Erreur : " . $e->getMessage(), 0); // Enregistrement côté serveur
+            return $e->getMessage();
         } finally {
             $pdo = null;
         }
+        return 1;
     }
 
     // fonction Recherche dans une table
@@ -160,7 +153,7 @@
 
             return $result;
         } catch (PDOException $e) {
-            return "Error: " . $e->getMessage();
+            echo $e->getMessage();
         } finally {
             $pdo = null;
         }
