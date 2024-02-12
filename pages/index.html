@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<p>
+	<form action="" id="form">
+		<input type="hidden" name="action" value="addition">
+		<input type="text" name="n1" placeholder="n1" value="12">
+		<input type="text" name="n2" placeholder="n2" value="13">
+		<input type="button" value="hehehe" id="hehehe">
+	</form>
+	</p>
+	<div id="result"></div>
+	<script src="../inc/js/data.js"></script>
+	<script>
+		document.getElementById("hehehe").addEventListener("click", function () {
+			var result = document.getElementById("result");
+
+			fetchData("addition&n1=23&n2=32")
+				.then((resultat) => {
+					console.log(resultat); // Log the resolved value
+					result.innerHTML = resultat.result;
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+		});
+	</script>
+</body>
+
+</html>
