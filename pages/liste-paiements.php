@@ -112,7 +112,7 @@ include("../templates/head.php");
                         .then((resultat) => {
                             console.log("Resultat");
                             console.log(resultat); // Log the resolved value
-                            var table = createTableObject(headers, resultat);
+                            var table = createTableObject(headers, JSON.parse(resultat));
                             container.appendChild(table);
 
                         })

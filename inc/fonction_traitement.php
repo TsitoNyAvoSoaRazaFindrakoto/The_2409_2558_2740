@@ -191,7 +191,7 @@ function poids_restant_sur_parcelles($date_begin, $date_end)
 
 
 function depense($date_begin, $date_end){
-    $paiement = paiement_cueilleur($date_begin, $date_end);
+    $paiement = paiement_cueilleur([ "initial" => $date_begin, "final" => $date_end]);
     $paiement_value = 0;
     for ($i=0; $i < count($paiement); $i++) { 
         $paiement_value += $paiement[$i]['paiement'];
