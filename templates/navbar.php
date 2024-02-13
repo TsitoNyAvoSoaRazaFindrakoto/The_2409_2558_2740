@@ -50,6 +50,10 @@ include_once("../inc/fonction_traitement.php");
                   class="dropdown-item border-radius-md">
                   <span>Github repository</span>
                 </a>
+                <a href="../inc/base.php"
+                  class="dropdown-item border-radius-md">
+                  <span>SQL scripts</span>
+                </a>
 
               </div>
 
@@ -64,6 +68,10 @@ include_once("../inc/fonction_traitement.php");
                 <a href="https://github.com/TsitoNyAvoSoaRazaFindrakoto/The_2409_2558_2740"
                   class="dropdown-item border-radius-md">
                   <span>Github repository</span>
+                </a>
+                <a href="../inc/base.php"
+                  class="dropdown-item border-radius-md">
+                  <span>SQL scripts</span>
                 </a>
 
               </div>

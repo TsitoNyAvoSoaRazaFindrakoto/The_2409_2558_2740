@@ -1,6 +1,8 @@
-CREATE DATABASE IF NOT EXISTS the;
+-- CREATE DATABASE IF NOT EXISTS the;
 
-USE the;
+-- USE the;
+
+
 
 
 -- Table user
