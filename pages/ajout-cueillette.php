@@ -96,7 +96,7 @@ include_once "../inc/fonction_base.php";
 						erreur.style.display = "block";
 					} else if (poids_cueilli.value === null || isNaN(poids_cueilli.value) || poids_cueilli.value <= 0) {
 						message.innerText = " poids_cueilli invalide";
-						erreur.style.display = "block";
+						erreur.style.display = "block" ;
 					}
 
 					submitFormExecute("form", "POST")
@@ -111,7 +111,6 @@ include_once "../inc/fonction_base.php";
 						})
 						.catch((err) => {
 							console.error(err);
-
 						});
 				});
 			</script>

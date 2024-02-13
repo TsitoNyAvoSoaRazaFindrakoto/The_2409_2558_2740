@@ -24,10 +24,12 @@ $result = array();
 
 if (function_exists($data[$func_Key])) {
 	// Call the function using variable functions
-	if (isset($data[$table])) {
+	if (isset($data[$table]) && count($realData) > 0) {
 		$result = call_user_func($data[$func_Key],$data[$table], $realData);
-	} else {
+	} else if(count($realData) > 0 && !isset($data[$table])){
 		$result =  call_user_func($data[$func_Key],$realData);
+	} else if (count($realData) == 0 && isset($data[$table])) {
+		$result =  call_user_func($data[$func_Key],$data[$table]);
 	}
 
 } else {

@@ -92,10 +92,12 @@ function get_poids_cueillette($date_begin, $date_end)
         WHERE date_cueillette BETWEEN '" . $date_begin . "' AND '" . $date_end . "'
         "
     );
-    if (!is_null($poids_cueillette[0]['SUM(poids_cueilli)']) || !verify_Interv_date($date_begin, $date_end)) {
-        return $poids_cueillette[0]['SUM(poids_cueilli)'];
+    if (!verify_Interv_date($date_begin, $date_end)) {
+        return "la premiere date est plus recent que l'autre";
+    } else if (!is_null($poids_cueillette[0]['SUM(poids_cueilli)'])) {
+        return "pas de cueillette entre ses deux date";
     } else {
-        return false; // Retourne 0 si la somme est NULL
+        return $poids_cueillette[0]['SUM(poids_cueilli)'];
     }
 }
 
@@ -104,29 +106,44 @@ function cout_revient($date_begin, $date_end)
 {
     $depense = request_all(
         "SELECT 
-        SUM(poids_cueilli) AS poids_total_cueillette,
-        SUM(montant_salaire_kg) AS montant_total_salaire
-        FROM 
+        SUM(poids_cueilli * montant_salaire_kg) AS salaire,
+        SUM(poids_cueilli) AS poids_cueilli
+    FROM 
         the_Cueillettes
-        JOIN 
+    JOIN 
         the_Parcelles ON the_Parcelles.id_parcelle = the_Cueillettes.id_parcelle
-        JOIN 
-        the_Varietes_de_the ON the_Varietes_de_the.id_variete = the_Parcelles.id_variete
-        JOIN 
+    JOIN 
         the_Cueilleurs_salaires ON the_Cueilleurs_salaires.id_cueilleur = the_Cueillettes.id_cueilleur
-        WHERE date_cueillette BETWEEN '" . $date_begin . "' AND '" . $date_end . "'
-        "
+    WHERE 
+        date_cueillette BETWEEN '" . $date_begin . "' AND '" . $date_end . "'
+    GROUP BY 
+        the_Cueillettes.id_cueilleur
+    "
     );
 
-    if (is_null($depense[0]['poids_total_cueillette']) || !verify_Interv_date($date_begin, $date_end)) {
-        return false;
+    if (is_null($depense)) {
+        return "pas de cuillette à cette date";
+    } else if (!verify_Interv_date($date_begin, $date_end)) {
+        return "pas de cueillette entre ces deux dates";
     }
 
-    $salaireTotal = $depense[0]['poids_total_cueillette'] * $depense[0]['montant_total_salaire'];
+    $salaireTotal = 0;
+    $sumPoidsCueillette = 0;
+    for ($i = 0; $i < count($depense); $i++) {
+        $salaireTotal += $depense[$i]['salaire'];
+        $sumPoidsCueillette += $depense[$i]['poids_cueilli'];
+    }
 
+    // Assuming you have a defined function named 'select_all'
     $depenseTotal = select_all("the_view_depense");
     $revient = $salaireTotal + $depenseTotal[0]['total_depenses'];
-    return $revient / $depense[0]['poids_total_cueillette'];
+
+    // Avoid division by zero
+    if ($sumPoidsCueillette == 0) {
+        return "La somme des poids de cueillette est nulle.";
+    }
+
+    return $revient / $sumPoidsCueillette;
 }
 
 function poids_restant_sur_parcelles($date_begin, $date_end)
@@ -142,19 +159,34 @@ function poids_restant_sur_parcelles($date_begin, $date_end)
     }
     $poids_restant = $poids_total_parcelle - $poids_total_cueillette;
     if ($poids_restant < 0 || !verify_Interv_date($date_begin, $date_end)) {
-        return false;
+        return "pas assez de stocker mais avec trop de cueillette";
     }
     return $poids_restant;
 }
 
 function bilan_general($dates)
 {
-    $date_begin = $dates["initial"];
-    $date_end = $dates["final"];
+    $date_begin = $dates['initial'];  
+    $date_end = $dates['final'];
     $retour = array(
         'total_cueillette' => get_poids_cueillette($date_begin, $date_end),
         'poids_parcelle' => poids_restant_sur_parcelles($date_begin, $date_end),
         'revient' => cout_revient($date_begin, $date_end)
     );
     return $retour;
+}
+
+function verify_admin($idUser){
+    $users = select_all("the_Utilisateur");
+    for($i = 0; $i < count($users);$i++){
+        if ($users[$i]['id_utilisateur'] == $idUser) {
+            if ($users[$i]['admin']) {
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+    }
+    return false;
 }

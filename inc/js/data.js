@@ -127,7 +127,26 @@ function submitFormFetch(idForm, method) {
 	return submit("traitement/fetch.php", idForm, method);
 }
 
+function send_or_fetch_FormData(href,form,method){
+	return new Promise((resolve, reject) => {
+		
+		var xhr = navigator();
 
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState == 4) {
+				if (xhr.status == 200) {
+					var retour = JSON.parse(xhr.responseText);
+					resolve(retour);
+				} else {
+					reject(new Error("Error: " + xhr.status));
+				}
+			}
+		};
+
+		xhr.open(method, href,true);
+		xhr.send(form);
+	});
+}
 
 // Exemple utilisation
 
