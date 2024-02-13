@@ -85,6 +85,13 @@ include_once("../inc/fonction_traitement.php");
             </a>
           </li>
           <li class="nav-item mx-2">
+            <a href="liste-paiements.php"
+              class="active nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center"
+              role="button">
+              Lister les paiements par cueilleurs
+            </a>
+          </li>
+          <li class="nav-item mx-2">
             <a href="home.php"
               class="active nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center"
               role="button">
@@ -97,7 +104,7 @@ include_once("../inc/fonction_traitement.php");
             </a>
             </li> -->
           <?php
-          
+
           if (verify_admin($_SESSION['id'])) { ?>
             <li class="nav-item dropdown dropdown-hover mx-2">
               <a class="nav-link ps-2 d-flex cursor-pointer align-items-center" id="dropdownMenuPages"
@@ -144,6 +151,12 @@ include_once("../inc/fonction_traitement.php");
                   <a href="list-entities.php?table=the_Categories_depenses" class="dropdown-item border-radius-md">
                     <span>Lister</span>
                   </a>
+                  <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1">
+                    Gestion de salaire
+                  </h6>
+                  <a href="bonus-malus.php" class="dropdown-item border-radius-md">
+                    <span>Configurer bonus et mallus</span>
+                  </a>
                 </div>
 
                 <div class="d-lg-none">
@@ -182,6 +195,12 @@ include_once("../inc/fonction_traitement.php");
                   </a>
                   <a href="list-entities.php?table=the_Categories_depenses" class="dropdown-item border-radius-md">
                     <span>Lister</span>
+                  </a>
+                  <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1">
+                    Gestion de salaire
+                  </h6>
+                  <a href="bonus-malus.php" class="dropdown-item border-radius-md">
+                    <span>Configurer bonus et mallus</span>
                   </a>
                 <?php } ?>
 

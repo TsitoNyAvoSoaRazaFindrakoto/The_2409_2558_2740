@@ -54,7 +54,7 @@ if (isset($_GET['id'])) {
             <form role="form" class="text-start" action="<?php if ($id > 0)
               echo "update.php";
             else
-              echo "insert.php"; ?>" method=post>
+              echo "traitement_the.php"; ?>" method=post>
               <input type="hidden" name="table" value="the_Varietes_de_the">
               <input type="hidden" name="column" value="id_variete">
               <input type="hidden" name="id" value="<?php echo $id; ?>">

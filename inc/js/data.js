@@ -87,7 +87,7 @@ function submit(href, idForm, method) {
 		xhr.onreadystatechange = function () {
 			if (xhr.readyState == 4) {
 				if (xhr.status == 200) {
-					var retour = xhr.responseText;
+					var retour = JSON.parse(xhr.responseText);
 					resolve(retour);
 				} else {
 					reject(new Error("Error: " + xhr.status));

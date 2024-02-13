@@ -1,8 +1,6 @@
--- CREATE DATABASE IF NOT EXISTS the;
+CREATE DATABASE IF NOT EXISTS the;
 
--- USE the;
-
-use db_p16_ETU002740;
+USE the;
 
 
 -- Table user
@@ -24,8 +22,16 @@ CREATE TABLE the_Varietes_de_the (
     id_variete INT AUTO_INCREMENT PRIMARY KEY,
     nom_variete VARCHAR(255) NOT NULL,
     occupation DECIMAL(10,2) NOT NULL,
-    rendement_par_pied DECIMAL(10,2) NOT NULL
+    rendement_par_pied DECIMAL(10,2) NOT NULL,
+    prix_vente DECIMAL(10,2) NOT NULL
 );
+
+            CREATE TABLE the_saison(
+                id_saison INT AUTO_INCREMENT PRIMARY KEY,
+                id_variete INT,
+                mois INT NOT NULL,
+                FOREIGN KEY (id_variete) REFERENCES the_Varietes_de_the(id_variete)
+            );
 
 -- Table Parcelles
 CREATE TABLE the_Parcelles (
@@ -37,6 +43,8 @@ CREATE TABLE the_Parcelles (
 );
 
 CREATE TABLE the_Plantations(
+
+
     id_plantation INT AUTO_INCREMENT PRIMARY KEY,
     id_parcelle INT NOT NULL,
     date_plantation Date,
@@ -78,6 +86,16 @@ CREATE TABLE the_Cueillettes (
     FOREIGN KEY (id_parcelle) REFERENCES the_Parcelles(id_parcelle)
 );
 
+CREATE TABLE the_Contrainte_Cueillette(
+    id_contrainte INT AUTO_INCREMENT PRIMARY KEY,
+    id_cueilleur INT,
+    poids_min DECIMAL(10,2) NOT NULL,
+    bonus DECIMAL(10,2) NOT NULL,
+    malus DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_cueilleur) REFERENCES the_Cueilleurs(id_cueilleur)
+
+);
+
 -- Table Depenses
 CREATE TABLE the_Depenses (
     id_depense INT AUTO_INCREMENT PRIMARY KEY,
@@ -98,11 +116,12 @@ VALUES
 ('alice.white@example.com', 'alice.white', 'White', 'Alice', 'Femme', '1988-12-10', sha1('alice_password'), 0);
 
 -- Insertion des variétés de thé
-INSERT INTO the_Varietes_de_the (nom_variete, occupation, rendement_par_pied) 
-VALUES 
-('Thé vert', 1.8, 4.5),
-('Thé noir', 2.0, 5.5),
-('Thé oolong', 1.5, 4.0);
+INSERT INTO the_Varietes_de_the (nom_variete, occupation, rendement_par_pied, prix_vente) VALUES
+('Assam', 1.5, 2.3, 10.50),
+('Darjeeling', 1.2, 1.8, 12.75),
+('Earl Grey', 1.8, 2.5, 15.00),
+('Sencha', 1.6, 2.0, 8.90);
+
 
 -- Insertion des parcelles
 INSERT INTO the_Parcelles (numero_parcelle, surface_hectare, id_variete) 
@@ -145,6 +164,21 @@ VALUES
 ('2023-07-15', 1, 120.00),
 ('2023-07-20', 2, 90.00),
 ('2023-07-25', 3, 150.00);
+
+
+
+INSERT INTO the_saison (id_variete, mois) VALUES
+(1, 3), -- Exemple: Assam se régénère en mars
+(2, 6), -- Exemple: Darjeeling se régénère en juin
+(3, 5), -- Exemple: Earl Grey se régénère en mai
+(4, 8); -- Exemple: Sencha se régénère en août
+
+
+INSERT INTO the_Contrainte_Cueillette (id_cueilleur, poids_min, bonus, malus) VALUES
+(1, 30.0, 1.5, 0.5), -- Exemple: Pierre Dupont
+(2, 40.0, 2.0, 0.8), -- Exemple: Marie Durand
+(3, 25.0, 1.2, 0.3); -- Exemple: Jeanne Martin
+
 
 
 CREATE OR REPLACE VIEW the_view_depense AS 

@@ -36,7 +36,7 @@
         $pdo = null;
     }*/
 
-    function delete($nameTable, $condition)
+    function delete_from($nameTable, $condition)
     {
         $pdo = connectbd();
         try {

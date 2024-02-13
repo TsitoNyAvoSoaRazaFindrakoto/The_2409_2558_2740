@@ -1,7 +1,8 @@
 <?php
 
-$title = "Home";
+$title = "Liste";
 include("../templates/head.php");
+
 
 ?>
 <div class="container position-sticky z-index-sticky top-0">
@@ -17,11 +18,10 @@ include("../templates/head.php");
                     <span class="mask bg-gradient-success opacity-4"></span>
                     <div class="container">
                         <div class="row">
-                            <div class="col-xl-7 text-center mx-auto">
-                                <h1 class="text-white pt-3 mt-n5">Bienvenue</h1>
-                                <p class="lead text-white mt-3" style="text-variation:small-caps;">Vous pourrez voir et
-                                    gérer des données sur notre plantation de thé.</p>
-                            </div>
+                            <!-- <div class="col-xl-7 text-center mx-auto">
+            <h1 class="text-white pt-3 mt-n5">Bienvenue</h1>
+            <p class="lead text-white mt-3" style="text-variation:small-caps;">Vous pourrez voir et gérer des données sur notre plantation de thé.</p>
+            </div> -->
                         </div>
                     </div>
                 </div>
@@ -30,20 +30,20 @@ include("../templates/head.php");
             <div class="row card card-body blur shadow-blur mx-3 mx-xl-4 mt-n6 d-flex align-items-center">
 
                 <div class=" mt-5 text-center">
-                    <h1 class="text-primary">Résultats de la production</h1>
-                    <form role="form" id="form"
-                        class="mb-6 text-start row flex-row align-items-center justify-content-center" action="">
-                        <input type="hidden" name="action" value="bilan_general">
+                    <h1 class="text-primary">Liste des paiements</h1>
+                    <form role="form" id="form" class="mb-6 text-start row flex-row align-items-center justify-content-center"
+                        action="">
+                        <input type="hidden" name="action" value="paiement_cueilleur">
                         <div class="col-4">
                             <div class="input-group input-group-static my-3">
                                 <label class="font-weight-bolder">Date de début</label>
-                                <input type="date" name="initial" class="form-control" id="initial">
+                                <input type="date" name="initial" class="form-control">
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="input-group input-group-static my-3">
                                 <label class="font-weight-bolder">Date de fin</label>
-                                <input type="date" name="final" class="form-control" id="final">
+                                <input type="date" name="final" class="form-control">
                             </div>
                         </div>
                         <div class="text-center col-2">
@@ -51,9 +51,6 @@ include("../templates/head.php");
                                 value="Voir résultat">
                         </div>
                     </form>
-                    <!-- <div class="divider div-transparent div-dot"></div> -->
-                    <!-- <span class="badge bg-primary mb-3">Résultats</span> -->
-                    <!-- </div> -->
                     <div class="flex-row justify-content-evenly align-items-center mb-6 row">
                         <div class="separator col-4"></div>
                         <div class="col-1 ">
@@ -68,6 +65,7 @@ include("../templates/head.php");
                 </div> -->
                         <div class="col-12">
                             <div class="table-responsive text-center" id="table-container">
+
                             </div>
                         </div>
                     </div>
@@ -93,12 +91,17 @@ include("../templates/head.php");
             </div> -->
                 </div>
             </div>
+            <?php
 
+
+            include("../templates/footer-non-absolute.php");
+
+            ?>
             <script src="../assets/js/utilities/chart-maker.js"></script>
             <script src="../assets/js/utilities/table.js"></script>
             <script src="../inc/js/data.js"></script>
             <script>
-                var headers = ["Poids cueilli total","Poids restant sur les parcelles","Vente","depense","benefice","Cout de revient/kg",];
+                var headers = ["date","cueilleur", "Poids cueilli", "bonus", "malus" , "paiement"];
                 document.getElementById("submit").addEventListener("click", function () {
                     var erreur = document.getElementById("error");
                     var container = document.getElementById("table-container");
@@ -109,10 +112,7 @@ include("../templates/head.php");
                         .then((resultat) => {
                             console.log("Resultat");
                             console.log(resultat); // Log the resolved value
-                            resultat =JSON.parse(resultat);
-                            var trueArray = [resultat]; 
-                            console.log(trueArray);
-                            var table = createTableObject(headers,trueArray);
+                            var table = createTableObject(headers, resultat);
                             container.appendChild(table);
 
                         })
@@ -122,53 +122,6 @@ include("../templates/head.php");
                         });
                 });
             </script>
-
-            <?php
-
-
-            include("../templates/footer-non-absolute.php");
-
-            ?>
-            <!-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var dataArr = [4.5, 90, 5.5];
-        var labels = ['Category 1', 'Category 2', 'Category 3'];
-        var colors = ['#e91e63', '#7b809a', '#03a9f4'];
-        var canvasId = "myPieChart";
-        var container = document.querySelector('.chart-container');
-        
-        pieChart(dataArr, labels, colors, canvasId, container);
-    });
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        var xLabels = ['January', 'February', 'March', 'April', 'May'];
-        var yLabel = 'Monthly Sales';
-        var dataArr =  [700, 75, 120, 90, 150];
-        var color = "#e91e63";
-        var width = 2;
-        var canvasId = "myLineChart";
-        var container = document.querySelector('.chart-container');
-        
-        lineChart(xLabels, yLabel, dataArr, color, width, canvasId, container);
-    });
-
-    var tableContainer = document.getElementById("table-container");
-    // cleaning up the parent div
-    while(tableContainer.firstChild) {
-        tableContainer.removeChild(tableContainer.firstChild);
-    }
-
-    var headers = ["Nom", "Prenom", "Age"];
-    var data = [
-        ["Ranaivo", "Jean", 65], 
-        ["Rakoto", "Paul", 40]
-    ];
-    var table = createTable(headers, data);
-    tableContainer.appendChild(table);
-
-
-</script> -->
 
             <!-- </div> -->
             <?php
