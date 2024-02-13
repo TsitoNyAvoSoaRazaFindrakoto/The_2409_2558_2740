@@ -33,7 +33,7 @@ include("../templates/head.php");
                     <h1 class="text-primary">Résultats de la production</h1>
                     <form role="form" id="form"
                         class="mb-6 text-start row flex-row align-items-center justify-content-center" action="">
-                        <input type="hidden" name="action" value="bilan_general">
+                        <input type="hidden" name="action" value="bilan">
                         <div class="col-4">
                             <div class="input-group input-group-static my-3">
                                 <label class="font-weight-bolder">Date de début</label>

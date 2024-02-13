@@ -3,7 +3,7 @@
 -- USE the;
 
 
-
+use db_p16_ETU002740;
 
 -- Table user
 CREATE TABLE the_Utilisateur (
@@ -156,9 +156,9 @@ VALUES
 -- Insertion des cueillettes
 INSERT INTO the_Cueillettes (date_cueillette, id_cueilleur, id_parcelle, poids_cueilli) 
 VALUES 
-('2023-07-10', 1, 1, 35.5),
-('2023-07-12', 2, 2, 42.8),
-('2023-07-15', 3, 3, 55.1);
+('2023-03-10', 1, 1, 35.5),
+('2023-06-12', 2, 2, 42.8),
+('2023-05-15', 3, 3, 55.1);
 
 -- Insertion des dépenses
 INSERT INTO the_Depenses (date, id_categorie, montant) 

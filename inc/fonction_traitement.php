@@ -2,9 +2,10 @@
 include_once 'fonction_base.php';
 include_once 'fonction_donne.php';
 
-function pourcent_salaire($pourcent,$id_cueilleur){
-    $salairecueilleur  =  select_by("the_Cueilleurs_salaires","id_cueilleur = ".$id_cueilleur);
-    return ($salairecueilleur[0]['montant_salaire_kg'] * $pourcent)/100;
+function pourcent_salaire($pourcent, $id_cueilleur)
+{
+    $salairecueilleur  =  select_by("the_Cueilleurs_salaires", "id_cueilleur = " . $id_cueilleur);
+    return ($salairecueilleur[0]['montant_salaire_kg'] * $pourcent) / 100;
 }
 
 function get_rendement_by_month($id_parcelle)
@@ -22,10 +23,11 @@ function get_rendement_by_month($id_parcelle)
 }
 
 
-function rendement_by_saison($id_parcelle,$date_begin,$date_end){
+function rendement_by_saison($id_parcelle, $date_begin, $date_end)
+{
     $rdm = get_rendement_by_month($id_parcelle);
     $parcelle = select_by("the_Parcelles", "id_parcelle = " . $id_parcelle);
-    $saison = select_by("the_saison","id_variete = ".$parcelle[0]['id_variete']." AND mois > MONTH('".$date_begin."') AND  mois < MONTH('".$date_end."');");
+    $saison = select_by("the_saison", "id_variete = " . $parcelle[0]['id_variete'] . " AND mois >= MONTH('" . $date_begin . "') AND  mois <= MONTH('" . $date_end . "');");
     if ($saison == null) {
         return 0;
     }
@@ -78,7 +80,8 @@ function get_cueillette_Month($date_cueillette)
 function verify_cueillette($data)
 {
 
-    $rdm = get_rendement_by_month($data['id_parcelle']) - get_cueillette_Month($data['date_cueillette']);
+    $dateBegin = rendementBefore($data);
+    $rdm = rendement_by_saison($data[0]['id_parcelle'], $dateBegin, $data) - get_poids_cueilletteByPlle($data[0]['id_parcelle'],$dateBegin, $data);
 
     if ($rdm < $data['poids_cueilli']) {
         return false;
@@ -101,6 +104,27 @@ function verify_Interv_date($date_begin, $date_end)
     return $timestamp_begin <= $timestamp_end;
 }
 
+function get_poids_cueilletteByPlle($id_parcelle,$date_begin, $date_end)
+{
+    $retour = 0;
+    $poids_cueillette = request_all(
+        "SELECT SUM(poids_cueilli) 
+        FROM the_Cueillettes 
+        JOIN the_Parcelles ON the_Parcelles.id_parcelle = the_Cueillettes.id_parcelle 
+        JOIN the_Varietes_de_the ON the_Varietes_de_the.id_variete = the_Parcelles.id_variete
+        WHERE date_cueillette BETWEEN '" . $date_begin . "' AND '" . $date_end . " AND 
+        the_Cueillettes.id_parcelle = ".$id_parcelle."'
+        "
+    );
+    if (!verify_Interv_date($date_begin, $date_end)) {
+        return "la première date est plus récente que l'autre";
+    } else if (is_null($poids_cueillette[0]['SUM(poids_cueilli)'])) {
+        return 0;
+    } else {
+        $retour = $poids_cueillette[0]['SUM(poids_cueilli)'];
+    }
+    return $retour;
+}
 function get_poids_cueillette($date_begin, $date_end)
 {
     $retour = 0;
@@ -173,7 +197,7 @@ function poids_restant_sur_parcelles($date_begin, $date_end)
     $lesParcelle = select_all('the_Parcelles');
     $poids_total_parcelle = 0;
     $poids_total_cueillette = get_poids_cueillette($date_begin, $date_end);
-    if(!verify_number($poids_total_cueillette)){
+    if (!verify_number($poids_total_cueillette)) {
         return $poids_total_cueillette;
     }
 
@@ -190,31 +214,34 @@ function poids_restant_sur_parcelles($date_begin, $date_end)
 }
 
 
-function depense($date_begin, $date_end){
-    $paiement = paiement_cueilleur([ "initial" => $date_begin, "final" => $date_end]);
+function depense($date_begin, $date_end)
+{
+    $paiement = paiement_cueilleur($date_begin, $date_end);
     $paiement_value = 0;
-    for ($i=0; $i < count($paiement); $i++) { 
+    for ($i = 0; $i < count($paiement); $i++) {
         $paiement_value += $paiement[$i]['paiement'];
     }
     $depense  = select_all("the_view_depense");
     return $paiement_value + $depense[0]['total_depenses'];
 }
 
-function benefice($date_begin, $date_end){
+function benefice($date_begin, $date_end)
+{
     $montant = montant_vente($date_begin, $date_end);
     $depense = depense($date_begin, $date_end);
-    if(!verify_number($montant)){
+    if (!verify_number($montant)) {
         return $montant;
     }
-    if(!verify_number($depense)){
+    if (!verify_number($depense)) {
         return $depense;
     }
     return $montant - $depense;
 }
 
-function cout_revient_byKG($date_begin, $date_end){
+function cout_revient_byKG($date_begin, $date_end)
+{
     $paiement = depense($date_begin, $date_end);
-    if(!verify_number($paiement)){
+    if (!verify_number($paiement)) {
         return $paiement;
     }
     $depense = request_all(
@@ -225,13 +252,13 @@ function cout_revient_byKG($date_begin, $date_end){
         date_cueillette BETWEEN '" . $date_begin . "' AND '" . $date_end . "'
     "
     );
-    if ($depense[0]['poids_cueilli']==0) {
+    if ($depense[0]['poids_cueilli'] == 0) {
         return 0;
     }
-    return $paiement/$depense[0]['poids_cueilli'];
-
+    return $paiement / $depense[0]['poids_cueilli'];
 }
-function montant_vente($date_begin, $date_end){
+function montant_vente($date_begin, $date_end)
+{
     $montant_vente = 0;
     $poids_cueillette = request_all(
         "SELECT 
@@ -246,22 +273,18 @@ function montant_vente($date_begin, $date_end){
     );
     if (!verify_Interv_date($date_begin, $date_end)) {
         return "la premiere date est plus recent que l'autre";
-    } else if (!is_null($poids_cueillette) ) {
+    } else if (!is_null($poids_cueillette)) {
         //return "pas de cueillette entre ses deux date";
     } else {
-        for ($i=0; $i < count($poids_cueillette); $i++) { 
+        for ($i = 0; $i < count($poids_cueillette); $i++) {
             $montant_vente += $poids_cueillette[$i]['poids_cueilli'] * $poids_cueillette[$i]['prix_vente'];
         }
     }
     return $montant_vente;
-
 }
 
-function bilan_general($dates)
+function bilan_general($date_begin, $date_end)
 {
-
-    $date_begin = $dates['initial']; 
-    $date_end = $dates['final'];
     $retour = array(
         'total_cueillette' => get_poids_cueillette($date_begin, $date_end),
         'poids_parcelle' => poids_restant_sur_parcelles($date_begin, $date_end),
@@ -274,14 +297,14 @@ function bilan_general($dates)
 }
 
 
-function verify_admin($idUser){
+function verify_admin($idUser)
+{
     $users = select_all("the_Utilisateur");
-    for($i = 0; $i < count($users);$i++){
+    for ($i = 0; $i < count($users); $i++) {
         if ($users[$i]['id_utilisateur'] == $idUser) {
             if ($users[$i]['admin']) {
                 return true;
-            }
-            else{
+            } else {
                 return false;
             }
         }
@@ -290,12 +313,9 @@ function verify_admin($idUser){
 }
 
 
-function paiement_cueilleur($dates)
+function paiement_cueilleur($date_begin, $date_end)
 {
-
-    $date_begin = $dates['initial']; 
-    $date_end = $dates['final'];
-    if(verify_Interv_date($date_begin, $date_end)){
+    if (verify_Interv_date($date_begin, $date_end)) {
         $cuellette = request_all(
             "SELECT
             the_Cueilleurs.nom AS nom,
@@ -315,8 +335,8 @@ function paiement_cueilleur($dates)
         );
 
         $resultat = array();
-        for ($i=0; $i < count($cuellette); $i++) {
-            $contrainte = select_by("the_Contrainte_Cueillette","id_cueilleur = ".$cuellette[$i]['id_cueilleur']);
+        for ($i = 0; $i < count($cuellette); $i++) {
+            $contrainte = select_by("the_Contrainte_Cueillette", "id_cueilleur = " . $cuellette[$i]['id_cueilleur']);
             $diffPoids = $cuellette[$i]['poids_cueilli'] - $contrainte[0]['poids_min'];
 
             $resultat[$i]['date'] = $cuellette[$i]['date_cueillette'];
@@ -325,22 +345,73 @@ function paiement_cueilleur($dates)
             $resultat[$i]['bonus'] = 0;
             $resultat[$i]['malus'] = 0;
             $resultat[$i]['paiement'] = 0;
-            if ($diffPoids>0) {
+            if ($diffPoids > 0) {
                 $resultat[$i]['bonus'] = $contrainte[0]['bonus'];
-                $resultat[$i]['paiement'] = $diffPoids * ($cuellette[$i]['montant_salaire_kg']+$contrainte[0]['bonus']);
-                $resultat[$i]['paiement'] += ($cuellette[$i]['poids_cueilli']-$diffPoids) * ($cuellette[$i]['montant_salaire_kg']-$contrainte[0]['bonus']);
-            }
-            elseif($diffPoids < 0){
+                $resultat[$i]['paiement'] = $diffPoids * ($cuellette[$i]['montant_salaire_kg'] - $contrainte[0]['bonus']);
+                $resultat[$i]['paiement'] += ($cuellette[$i]['poids_cueilli'] - $diffPoids) * ($cuellette[$i]['montant_salaire_kg'] + $contrainte[0]['bonus']);
+            } elseif ($diffPoids < 0) {
                 $resultat[$i]['malus'] = $contrainte[0]['malus'];
-                $resultat[$i]['paiement'] = $cuellette[$i]['poids_cueilli'] * ($cuellette[$i]['montant_salaire_kg']-$contrainte[0]['malus']);
+                $resultat[$i]['paiement'] = $cuellette[$i]['poids_cueilli'] * ($cuellette[$i]['montant_salaire_kg'] - $contrainte[0]['malus']);
             } else {
-                $resultat[$i]['paiement'] =$cuellette[$i]['poids_cueilli']  * $cuellette[$i]['montant_salaire_kg'];
+                $resultat[$i]['paiement'] = $cuellette[$i]['poids_cueilli'] * ($cuellette[$i]['montant_salaire_kg']);
             }
-            
         }
         return $resultat;
-    }
-    else{
+    } else {
         return "pas de cueillette entre ces deux dates";
     }
 }
+
+
+
+function rendementBefore($date)
+{
+    $rdm = select_by("the_saison", "mois <= MONTH('" . $date . "') ORDER BY mois DESC LIMIT 1");
+    if($rdm === null || empty($rdm)){
+        return $date; 
+    }
+    $annee = date("Y", strtotime($date));
+    return $annee . "-" . $rdm[0]['mois'] . "-01";
+}
+
+
+function prevision($date_end)
+{
+    $parcelles = request_all(
+        "SELECT * from the_Parcelles 
+        JOIN the_Varietes_de_the 
+        ON the_Varietes_de_the.id_variete = the_Parcelles.id_variete
+        "
+    );
+    $prevision = array();
+    for ($i = 0; $i < count($parcelles); $i++) {
+        $prevision[$i]['numero_parcelle'] = $parcelles[$i]['numero_parcelle'];
+        $prevision[$i]['nom_variete'] = $parcelles[$i]['nom_variete'];
+        $prevision[$i]['surface_hectare'] = $parcelles[$i]['surface_hectare'];
+        $prevision[$i]['nbPied'] = intval($parcelles[$i]['surface_hectare'] * 10000 / $parcelles[$i]['occupation']);
+        $prevision[$i]['poids_restant'] = poids_restant_sur_parcelles(rendementBefore($date_end), $date_end);
+    }
+    return $prevision;
+}
+
+function previsionGlobal($date_end)
+{
+    $parcelles = request_all(
+        "SELECT * from the_Parcelles 
+        JOIN the_Varietes_de_the 
+        ON the_Varietes_de_the.id_variete = the_Parcelles.id_variete
+        "
+    );
+    $prevision = array();
+    $prevision['the_restant'] = 0;
+    $prevision['montant'] = 0;
+    for ($i = 0; $i < count($parcelles); $i++) {
+        $poidsRestant = poids_restant_sur_parcelles(rendementBefore($date_end), $date_end);
+        if (verify_number($poidsRestant)) {
+            $prevision['the_restant'] += $poidsRestant;
+            $prevision['montant'] += $poidsRestant * $parcelles[$i]['prix_vente'];
+        }
+    }
+    return $prevision;
+}
+

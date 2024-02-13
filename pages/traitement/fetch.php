@@ -3,6 +3,8 @@
 header("Content-Type: application/json");
 include_once "../../inc/fonction_base.php";
 include_once "../../inc/fonction_traitement.php";
+include_once "../../inc/fonction_donne.php";
+include_once "../../inc/functions.php";
 $func_Key = "action";
 $table = "table";
 $data = array();

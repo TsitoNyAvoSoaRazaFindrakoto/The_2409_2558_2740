@@ -33,7 +33,7 @@ include("../templates/head.php");
                     <h1 class="text-primary">Liste des paiements</h1>
                     <form role="form" id="form" class="mb-6 text-start row flex-row align-items-center justify-content-center"
                         action="">
-                        <input type="hidden" name="action" value="paiement_cueilleur">
+                        <input type="hidden" name="action" value="paiement">
                         <div class="col-4">
                             <div class="input-group input-group-static my-3">
                                 <label class="font-weight-bolder">Date de début</label>

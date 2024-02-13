@@ -38,10 +38,10 @@ include_once "../inc/fonction_base.php";
 							<span class="text-white" id="message"></span>
 						</div>
 						<form role="form" class="text-start" action="#" id="form" method="post">
-							<input type="hidden" class="form-control" name="action" value="verify_cueillette">
+							<input type="hidden" class="form-control" name="action" value="check_cueillette">
 							<div class="input-group input-group-static my-3">
 								<label>date_cueillette</label>
-								<input type="date_cueillette" class="form-control" name="date_cueillette" id="date_cueillette">
+								<input type="date" class="form-control" name="date_cueillette" id="date_cueillette">
 							</div>
 							<div class="input-group input-group-static mb-3">
 								<label>Cueilleur</label>
@@ -101,11 +101,11 @@ include_once "../inc/fonction_base.php";
 
 					submitFormExecute("form", "POST")
 						.then((resultat) => {
-							console.log(resultat); // Log the resolved value
-							if (resultat === true) {
+							console.log(resultat.getCla); // Log the resolved value
+							if (resultat == 1) {
 								window.location.href = "home.php";
 							} else {
-								message.innerText = resultat;
+								message.innerText = "il n'y a plus cette quantite";
 								erreur.style.display = "block";
 							}
 						})

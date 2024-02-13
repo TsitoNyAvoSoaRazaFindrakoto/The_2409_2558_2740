@@ -54,19 +54,19 @@ if (isset($_GET['id'])) {
               echo "update.php";
             else
               echo "insert.php"; ?>" method=post>
-              <input type="hidden" name="table" value="the_Parecelles">
+              <input type="hidden" name="table" value="the_Parcelles">
               <input type="hidden" name="column" value="id_Parcelle">
               <input type="hidden" name="id" value="<?php echo $id; ?>">
                 <div class="input-group input-group-static my-3">
                   <label>Numero de parcelle</label>
-                  <input type="number" name="numero_parcelle" class="form-control" value="<?php echo $d1; ?>">
+                  <input type="text" name="numero_parcelle" class="form-control" value="<?php echo $d1; ?>">
                 </div>
                 <div class="input-group input-group-static mb-3">
                   <label>Surface</label>
                   <input type="number" name="surface_hectare" class="form-control" value="<?php echo $d2;?>">
                 </div>
-                <div class="input-group input-group-dynamic my-3">
-                  <label class="form-label">Variete de the</label>
+                <div class="input-group input-group-static my-3">
+                  <label>Variete de the</label>
                   <select name="id_variete" class="form-control">
                       <?php
                         $data = select_all("the_Varietes_de_the");

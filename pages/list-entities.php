@@ -135,7 +135,7 @@ $table = $_GET["table"];
                     .then((resultat) => {
                         console.log(resultat); // Log the resolved value
                         if (resultat != null) {
-                            res = resultat;
+                            res = JSON.parse(resultat);
                             var headers = Object.keys(res[0]); // prendre les noms de tous les champs
 
                             var tableContainer = document.getElementById("table-container");

@@ -50,8 +50,7 @@ include_once("../inc/fonction_traitement.php");
                   class="dropdown-item border-radius-md">
                   <span>Github repository</span>
                 </a>
-                <a href="../inc/base.php"
-                  class="dropdown-item border-radius-md">
+                <a href="../inc/base.php" class="dropdown-item border-radius-md">
                   <span>SQL scripts</span>
                 </a>
 
@@ -69,8 +68,7 @@ include_once("../inc/fonction_traitement.php");
                   class="dropdown-item border-radius-md">
                   <span>Github repository</span>
                 </a>
-                <a href="../inc/base.php"
-                  class="dropdown-item border-radius-md">
+                <a href="../inc/base.php" class="dropdown-item border-radius-md">
                   <span>SQL scripts</span>
                 </a>
 
@@ -78,7 +76,13 @@ include_once("../inc/fonction_traitement.php");
 
             </div>
           </li>
-
+          <li class="nav-item mx-2">
+            <a href="prevision.php"
+              class="active nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center"
+              role="button">
+              Voir prevision
+            </a>
+          </li>
           <li class="nav-item mx-2">
             <a href="ajout-cueillette.php"
               class="active nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center"
